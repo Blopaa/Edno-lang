@@ -1,8 +1,6 @@
 //remove this only for test lexer
 
-import { tokeniser } from './lexer/lexer';
+import { lexer } from './lexer';
 
-console.log(tokeniser(`
-  dec hello = 'world'
-  print hello
-`))
+console.log(lexer(`dec hello = 'world'
+  print hello`))
