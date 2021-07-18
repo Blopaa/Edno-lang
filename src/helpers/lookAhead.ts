@@ -13,10 +13,10 @@ export default function lookAhead(
   input: string,
   matchNext?: RegExp
 ): string[] {
-    // where velue its stored
+    // where value its stored
   const bucket: string[] = [];
   while (true) {
-      //curernt index on function
+      //current index on function
     const nextIndex = currentPosition + bucket.length;
         //current token on function
     const nextToken = input[nextIndex];
@@ -30,7 +30,7 @@ export default function lookAhead(
     if (matchNext && bucket.length) {
       m = matchNext;
     }
-    // case nexttoken doesnt match regex break
+    // case nextToken doesnt match regex break
     if (m && !m.test(nextToken)) {
       break;
     }

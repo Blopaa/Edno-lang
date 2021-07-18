@@ -2,7 +2,7 @@
 /**
  * 
  * @param str token key
- * @param currentPosition curretn position on lexer
+ * @param currentPosition current position on lexer
  * @param input input text
  * @returns if match any tokenMapper
  */

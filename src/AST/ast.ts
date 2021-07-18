@@ -1,22 +1,22 @@
-import { ASTNode, ASTNodeType, Token, TokenType } from '../../types/index.';
+import { ASTNode, ASTNodeType, Token, TokenType } from '../../types';
 
 export function toAST(tokens: Token[]): ASTNode {
   let currentIndex = 0;
-
-  process();
 
   const children: ASTNode[] = [];
 
   function process(): ASTNode | null {
     const currentToken = tokens[currentIndex];
+    let assignmentNode: Token;
 
     switch (currentToken.type) {
       case TokenType.AssignmentOperator:
-        const assignementNode = tokens[currentIndex++];
+        assignmentNode = tokens[currentIndex++];
 
-        if (assignementNode.type !== TokenType.AssignmentOperator) {
+        if (assignmentNode.type !== TokenType.AssignmentOperator) {
           throw new Error('Must use = operator to assign value');
         }
+        return null
       case TokenType.LineBreak:
         currentIndex++;
         return null;
@@ -32,8 +32,15 @@ export function toAST(tokens: Token[]): ASTNode {
         let nextNode = tokens[currentIndex++];
         const children: ASTNode[] = [];
 
-        while (nextNode.type !== TokenType.LineBreak) {
+        while (nextNode.type !== TokenType.LineBreak || !nextNode) {
           const next = process();
+
+          if (
+            next?.type !== ASTNodeType.String &&
+            next?.type !== ASTNodeType.Literal
+          ) {
+            throw new Error(`Illegal arguments to print ${nextNode.type}`);
+          }
 
           if (next) {
             children.push(next);
@@ -52,7 +59,7 @@ export function toAST(tokens: Token[]): ASTNode {
         ) {
           throw new Error('Invalid variable node');
         }
-        const assignmentNode = tokens[currentIndex++];
+        assignmentNode = tokens[currentIndex++];
 
         if (assignmentNode.type !== TokenType.AssignmentOperator) {
           throw new Error('Must use = operator to assign value');

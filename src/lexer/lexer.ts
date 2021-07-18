@@ -1,4 +1,4 @@
-import { Token, TokenMapper, TokenType } from '../../types/index.';
+import { Token, TokenMapper, TokenType } from '../../types';
 import lookAhead from '../helpers/lookAhead';
 import lookaheadString from '../helpers/lookAheadString';
 
@@ -32,6 +32,7 @@ export function tokeniser(input: string): Token[] {
     //map all TokenMapper and try to match with currentToken
 
     for (const { key, value } of TokenMapper) {
+      //check if match with keyword
       if (!lookaheadString(key, currentPosition, input)) {
         continue;
       }
@@ -53,7 +54,7 @@ export function tokeniser(input: string): Token[] {
         input,
         literalRegexNext
       );
-      //add clasified literal token
+      //add classified literal token
       out.push({
         type: TokenType.Literal,
         value: bucket.join(''),
@@ -68,11 +69,14 @@ export function tokeniser(input: string): Token[] {
 
       // catch all string value
       const bucket = lookAhead(/[^']/, currentPosition, input);
+      if (!bucket.join('')) {
+        throw new Error(`Ilegal structure, unspected void string`);
+      }
       out.push({
         type: TokenType.String,
         value: bucket.join(''),
       });
-      //set curernt position adter string token
+      //set current position after string token
       currentPosition += bucket.length + 1;
 
       continue;
@@ -80,6 +84,8 @@ export function tokeniser(input: string): Token[] {
 
     throw new Error(`Unknow input character: ${currentToken}`);
   }
+
+  // out.push({ type: TokenType.LineBreak });
 
   return out;
 }
