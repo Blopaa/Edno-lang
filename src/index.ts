@@ -1,6 +1,17 @@
-//remove this only for test lexer
+//remove this only for tests
 
-import { lexer } from './lexer';
+import { toAST } from './AST/ast';
+import { tokeniser } from './lexer/lexer';
 
-console.log(lexer(`dec hello = 'world'
-  print hello`))
+const DSL = `
+dec hello = 'world'
+print 'hello'
+`;
+
+const tokens = tokeniser(DSL);
+
+console.log({ tokens });
+
+const AST = toAST(tokens);
+
+console.log(JSON.stringify(AST, undefined, 2));
