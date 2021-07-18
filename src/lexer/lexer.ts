@@ -1,4 +1,4 @@
-import { Token, TokenMapper, TokenType } from '../../types';
+import { Token, TokenMapper, TokenType } from '../../types/index.';
 import lookAhead from '../helpers/lookAhead';
 import lookaheadString from '../helpers/lookAheadString';
 
@@ -46,14 +46,14 @@ export function tokeniser(input: string): Token[] {
     }
     //check regex match with literal token
     if (literalRegex.test(currentToken)) {
-        // look on input all literal to catch it all and save its value
+      // look on input all literal to catch it all and save its value
       const bucket = lookAhead(
         literalRegex,
         currentPosition,
         input,
         literalRegexNext
       );
-        //add clasified literal token
+      //add clasified literal token
       out.push({
         type: TokenType.Literal,
         value: bucket.join(''),
@@ -62,7 +62,7 @@ export function tokeniser(input: string): Token[] {
       currentPosition += bucket.length;
       continue;
     }
-     //catch strign types
+    //catch strign types
     if (currentToken === "'") {
       currentPosition++; //ignore first '
 
@@ -80,6 +80,6 @@ export function tokeniser(input: string): Token[] {
 
     throw new Error(`Unknow input character: ${currentToken}`);
   }
-  
+
   return out;
 }
