@@ -1,1 +1,1 @@
-export { tokeniser as lexer } from './lexer'
+export { tokenizer as lexer } from './lexer'

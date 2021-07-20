@@ -1,4 +1,4 @@
-import { Token, TokenMapper, TokenType } from '../../types';
+import {Token, TokenMapper, TokenType} from '../../types';
 import lookAhead from '../helpers/lookAhead';
 import lookaheadString from '../helpers/lookAheadString';
 
@@ -8,7 +8,7 @@ import lookaheadString from '../helpers/lookAheadString';
  * @returns an array of classified tokens
  */
 
-export function tokeniser(input: string): Token[] {
+export function tokenizer(input: string): Token[] {
   //where classified tokens store
   const out: Token[] = [];
   //current position at input text
@@ -36,7 +36,28 @@ export function tokeniser(input: string): Token[] {
       if (!lookaheadString(key, currentPosition, input)) {
         continue;
       }
+      if(value.type === TokenType.VariableDeclaration){
+        let fakeCurrentPosition = currentPosition+key.length
+        while(true){
+        let fakeCurrentToken = input[fakeCurrentPosition]
 
+          if (fakeCurrentToken === ' ') {
+            fakeCurrentPosition++;
+            continue;
+          }
+          if(lookaheadString('const', fakeCurrentPosition, input) || lookaheadString('fit', fakeCurrentPosition, input)){
+            break;
+          }else{
+            throw new Error('Illegal action, variable declaration must be classified as const or fit')
+          }
+        }
+      }
+      if(value.type === TokenType.Fit || value.type === TokenType.Const){
+        let lastIndex = out[out.length - 1];
+        if(!lastIndex || lastIndex.type !== TokenType.VariableDeclaration){
+          throw new Error(`cannot assign ${key} without a previous declaration`)
+        }
+      }
       out.push(value); // add classified token
       currentPosition += key.length; // update position after added token
       didMatch = true; // update match to continue to next iteration line 44-46
@@ -63,14 +84,14 @@ export function tokeniser(input: string): Token[] {
       currentPosition += bucket.length;
       continue;
     }
-    //catch strign types
+    //catch string types
     if (currentToken === "'") {
       currentPosition++; //ignore first '
 
       // catch all string value
       const bucket = lookAhead(/[^']/, currentPosition, input);
       if (!bucket.join('')) {
-        throw new Error(`Ilegal structure, unspected void string`);
+        throw new Error(`Illegal structure, inspected void string`);
       }
       out.push({
         type: TokenType.String,
@@ -82,7 +103,7 @@ export function tokeniser(input: string): Token[] {
       continue;
     }
 
-    throw new Error(`Unknow input character: ${currentToken}`);
+    throw new Error(`Unknown input character: ${currentToken}`);
   }
 
   // out.push({ type: TokenType.LineBreak });

@@ -1,17 +1,14 @@
 //remove this only for tests
 
 import { toAST } from './AST/ast';
-import { tokeniser } from './lexer/lexer';
+import {lexer} from './lexer';
 
-const DSL = `
-dec hello = 'world'
-print 'hello'
-`;
+const DSL = `dec const hello = 'hi'`;
 
-const tokens = tokeniser(DSL);
+const tokens = lexer(DSL);
 
 console.log({ tokens });
 
-const AST = toAST(tokens);
-
-console.log(JSON.stringify(AST, undefined, 2));
+// const AST = toAST(tokens);
+//
+// console.log(`\n\nAst: \n\n${JSON.stringify(AST, undefined, 2)}`);
