@@ -1,4 +1,4 @@
-import {Token, TokenMapper, TokenType} from '../../types';
+import { Token, TokenMapper, TokenType, TokenValueNode } from '../../types';
 import lookAhead from '../helpers/lookAhead';
 import lookaheadString from '../helpers/lookAheadString';
 
@@ -20,6 +20,9 @@ export function tokenizer(input: string): Token[] {
     // both regex to match literals
     const literalRegex = /[a-zA-Z]/;
     const literalRegexNext = /[a-zA-Z0-9]/;
+
+    const numberRegex = /^[0-9]+/;
+    const floatRegex = /^[0-9.]+/;
     // if match with any TokenMapper default false
     let didMatch: boolean = false;
 
@@ -36,26 +39,36 @@ export function tokenizer(input: string): Token[] {
       if (!lookaheadString(key, currentPosition, input)) {
         continue;
       }
-      if(value.type === TokenType.VariableDeclaration){
-        let fakeCurrentPosition = currentPosition+key.length
-        while(true){
-        let fakeCurrentToken = input[fakeCurrentPosition]
 
-          if (fakeCurrentToken === ' ') {
+      if (value.type === TokenType.VariableDeclaration) {
+        let fakeCurrentPosition = currentPosition + key.length; //current position reference to check next value without modifying loop
+        //check next position after declare a variable is const or fit
+        while (true) {
+          //ignore whitespaces - repeated code
+          if (input[fakeCurrentPosition] === ' ') {
             fakeCurrentPosition++;
             continue;
           }
-          if(lookaheadString('const', fakeCurrentPosition, input) || lookaheadString('fit', fakeCurrentPosition, input)){
+          //case is fit or const next token if its not throw new error
+          if (
+            lookaheadString('const', fakeCurrentPosition, input) ||
+            lookaheadString('fit', fakeCurrentPosition, input)
+          ) {
             break;
-          }else{
-            throw new Error('Illegal action, variable declaration must be classified as const or fit')
+          } else {
+            throw new Error(
+              'Illegal action, variable declaration must be classified as const or fit',
+            );
           }
         }
       }
-      if(value.type === TokenType.Fit || value.type === TokenType.Const){
+
+      if (value.type === TokenType.Fit || value.type === TokenType.Const) {
         let lastIndex = out[out.length - 1];
-        if(!lastIndex || lastIndex.type !== TokenType.VariableDeclaration){
-          throw new Error(`cannot assign ${key} without a previous declaration`)
+        if (!lastIndex || lastIndex.type !== TokenType.VariableDeclaration) {
+          throw new Error(
+            `cannot assign ${key} without a previous declaration`,
+          );
         }
       }
       out.push(value); // add classified token
@@ -66,6 +79,37 @@ export function tokenizer(input: string): Token[] {
     if (didMatch) {
       continue;
     }
+
+    if (floatRegex.test(currentToken)) {
+      let splattedNumber: String[] = lookAhead(floatRegex, currentPosition, input);
+      if(splattedNumber[0] === '.'){
+        splattedNumber.unshift('0')
+      }
+      let numberToken:
+        | TokenValueNode<TokenType.Number>
+        | TokenValueNode<TokenType.Float> | null = null;
+      splattedNumber.map((key) => {
+        if (key === '.') {
+          numberToken = {
+            type: TokenType.Float,
+            value: splattedNumber.join(''),
+          };
+        }
+      });
+      if (!numberToken) {
+        numberToken = {
+          type: TokenType.Number,
+          value: lookAhead(numberRegex, currentPosition, input).join(''),
+        };
+      }
+
+      out.push(numberToken)
+      currentPosition += numberToken.value.length;
+      if(input[currentPosition] && input[currentPosition] != " "){
+        throw new Error(`Unknown input character: ${input[currentPosition]}`);
+      }
+      continue;
+    }
     //check regex match with literal token
     if (literalRegex.test(currentToken)) {
       // look on input all literal to catch it all and save its value
@@ -73,7 +117,7 @@ export function tokenizer(input: string): Token[] {
         literalRegex,
         currentPosition,
         input,
-        literalRegexNext
+        literalRegexNext,
       );
       //add classified literal token
       out.push({
@@ -105,8 +149,6 @@ export function tokenizer(input: string): Token[] {
 
     throw new Error(`Unknown input character: ${currentToken}`);
   }
-
-  // out.push({ type: TokenType.LineBreak });
 
   return out;
 }
