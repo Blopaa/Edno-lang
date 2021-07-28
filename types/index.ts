@@ -2,10 +2,12 @@ export enum TokenType {
   VariableDeclaration = 'VariableDeclaration',
   End = 'End',
   Function = 'Function',
-  OpenParenthesis = 'OpenParenthesis',
-  ClosedParenthesis = 'ClosedParenthesis',
-  OpenKeyParenthesis = 'OpenKeyParenthesis',
-  ClosedKeyParenthesis = 'ClosedKeyParenthesis',
+  LeftParenthesis = 'LeftParenthesis',
+  RightParenthesis = 'RightParenthesis',
+  LeftBrace = 'LeftBrace',
+  RightBrace = 'RightBrace',
+  LeftBracket = 'LeftBracket',
+  RightBracket = 'RightBracket',
   AssignmentOperator = 'AssignmentOperator',
   Literal = 'Literal',
   String = 'String',
@@ -22,6 +24,23 @@ export enum TokenType {
   If = 'If',
   Else = 'Else',
   For = 'For',
+  Greater = 'Greater',
+  GreaterOrEqual = 'GreaterOrEqual',
+  Less = 'Less',
+  LessOrEqual = 'LessOrEqual',
+  Asterisk = 'Asterisk',
+  AsteriskEqual = 'AsteriskEqual',
+  Not = 'Not',
+  NotEqual = 'NotEqual',
+  Plus = 'Plus',
+  DoublePlus = 'DoublePlus',
+  PlusEqual = 'PlusEqual',
+  Minus = 'Minus',
+  DoubleMinus = 'DoubleMinus',
+  MinusEqual = 'MinusEqual',
+  DoubleBar = 'DoubleBar',
+  DoubleAmpersan = 'DoubleAmpersan',
+  Dot = 'Dot',
 }
 
 export interface TokenNode<T extends TokenType> {
@@ -38,12 +57,30 @@ export interface TokenBooleanNode<T extends TokenType>
 }
 
 export type Token =
+  | TokenNode<TokenType.GreaterOrEqual>
+  | TokenNode<TokenType.Less>
+  | TokenNode<TokenType.LessOrEqual>
+  | TokenNode<TokenType.Asterisk>
+  | TokenNode<TokenType.AsteriskEqual>
+  | TokenNode<TokenType.Not>
+  | TokenNode<TokenType.NotEqual>
+  | TokenNode<TokenType.Plus>
+  | TokenNode<TokenType.PlusEqual>
+  | TokenNode<TokenType.DoublePlus>
+  | TokenNode<TokenType.DoubleMinus>
+  | TokenNode<TokenType.Minus>
+  | TokenNode<TokenType.MinusEqual>
+  | TokenNode<TokenType.DoubleBar>
+  | TokenNode<TokenType.DoubleAmpersan>
+  | TokenNode<TokenType.Dot>
+  | TokenNode<TokenType.LeftBracket>
+  | TokenNode<TokenType.RightBracket>
   | TokenBooleanNode<TokenType.Boolean>
   | TokenNode<TokenType.Function>
-  | TokenNode<TokenType.ClosedKeyParenthesis>
-  | TokenNode<TokenType.OpenKeyParenthesis>
-  | TokenNode<TokenType.ClosedParenthesis>
-  | TokenNode<TokenType.OpenParenthesis>
+  | TokenNode<TokenType.RightBrace>
+  | TokenNode<TokenType.LeftBrace>
+  | TokenNode<TokenType.RightParenthesis>
+  | TokenNode<TokenType.LeftParenthesis>
   | TokenNode<TokenType.End>
   | TokenNode<TokenType.AssignmentOperator>
   | TokenNode<TokenType.VariableDeclaration>
@@ -51,6 +88,11 @@ export type Token =
   | TokenNode<TokenType.Log>
   | TokenNode<TokenType.Const>
   | TokenNode<TokenType.Fit>
+  | TokenNode<TokenType.Return>
+  | TokenNode<TokenType.If>
+  | TokenNode<TokenType.Else>
+  | TokenNode<TokenType.For>
+  | TokenNode<TokenType.Greater>
   | TokenValueNode<TokenType.Literal>
   | TokenValueNode<TokenType.String>
   | TokenValueNode<TokenType.Float>
@@ -58,6 +100,28 @@ export type Token =
 
 export const TokenMapper: Array<{ key: string; value: Token }> = [
   { key: '\n', value: { type: TokenType.LineBreak } },
+  { key: '>', value: { type: TokenType.Greater } },
+  { key: '>=', value: { type: TokenType.GreaterOrEqual } },
+  { key: '<', value: { type: TokenType.Less } },
+  { key: '<=', value: { type: TokenType.LessOrEqual } },
+  { key: '*', value: { type: TokenType.Asterisk } },
+  { key: '*=', value: { type: TokenType.AsteriskEqual } },
+  { key: '!', value: { type: TokenType.Not } },
+  { key: '!=', value: { type: TokenType.NotEqual } },
+  { key: '+', value: { type: TokenType.Plus } },
+  { key: '++', value: { type: TokenType.DoublePlus } },
+  { key: '+=', value: { type: TokenType.PlusEqual } },
+  { key: '-', value: { type: TokenType.Minus } },
+  { key: '-=', value: { type: TokenType.MinusEqual } },
+  { key: '--', value: { type: TokenType.DoubleMinus } },
+  { key: '||', value: { type: TokenType.DoubleBar } },
+  { key: '.', value: { type: TokenType.Dot } },
+  { key: '[', value: { type: TokenType.LeftBracket } },
+  { key: ']', value: { type: TokenType.RightBracket } },
+  { key: 'if', value: { type: TokenType.If } },
+  { key: 'else', value: { type: TokenType.Else } },
+  { key: 'for', value: { type: TokenType.For } },
+  { key: 'return', value: { type: TokenType.Return } },
   { key: 'dec', value: { type: TokenType.VariableDeclaration } },
   { key: 'const', value: { type: TokenType.Const } },
   { key: 'fit', value: { type: TokenType.Fit } },
@@ -65,10 +129,10 @@ export const TokenMapper: Array<{ key: string; value: Token }> = [
   { key: 'print', value: { type: TokenType.Log } },
   { key: ';', value: { type: TokenType.End } },
   { key: 'function', value: { type: TokenType.Function } },
-  { key: '(', value: { type: TokenType.OpenParenthesis } },
-  { key: ')', value: { type: TokenType.ClosedParenthesis } },
-  { key: '{', value: { type: TokenType.OpenKeyParenthesis } },
-  { key: '}', value: { type: TokenType.ClosedKeyParenthesis } },
+  { key: '(', value: { type: TokenType.LeftParenthesis } },
+  { key: ')', value: { type: TokenType.RightParenthesis } },
+  { key: '{', value: { type: TokenType.LeftBrace } },
+  { key: '}', value: { type: TokenType.RightBrace } },
   {
     key: 'true',
     value: {
