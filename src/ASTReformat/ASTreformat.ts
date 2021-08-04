@@ -1,6 +1,5 @@
 import {
   ASTAssignmentNode,
-  ASTLiteralNode,
   ASTNode,
   ASTNodeType,
   ASTProgramNode,
@@ -24,7 +23,7 @@ export default function ASTreformat(AST: ASTProgramNode) {
   );
   let currentVariable: VariableLocationData;
   instancesLocation.map((il) => {
-    const variableInstance: ASTNode = dotNotationParser(il, AST) as ASTLiteralNode<string>;
+    const variableInstance: ASTNode = dotNotationParser(il, AST) as ASTValueNode<ASTNodeType.Literal, string>;
     if (variableInstance.type === ASTNodeType.Literal) {
       const variableAlredyCached = variableDeclarationCache.find(
         (v) => v.variableName === variableInstance.value,
@@ -55,7 +54,6 @@ export default function ASTreformat(AST: ASTProgramNode) {
       if (!isScopeAble) {
         throw new Error('cannot access a variable out of the scope');
       }
-        variableInstance.referenceValue =(<PrimitiveTypes>(<ASTAssignmentNode> dotNotationParser(currentVariable.location, AST)).children[0]).value
     }
   });
 
