@@ -1,13 +1,12 @@
 import { ASTNode, ASTNodeType } from '../../types';
-import getInstancesLocations from './getInstancesLocations';
 
 export default function getVariableDeclarationLocation(
   AST: ASTNode[],
   name: string,
   location: string[] = [],
-  outindex: number = 0,
+  outIndex: number = 0,
 ): string[] {
-  if (outindex > 0) {
+  if (outIndex > 0) {
     location.push('children');
   }
   let found: boolean = false;
@@ -25,7 +24,7 @@ export default function getVariableDeclarationLocation(
         n.children,
         name,
         tempLocation,
-        1 + outindex,
+        1 + outIndex,
       );
     }
     index++;

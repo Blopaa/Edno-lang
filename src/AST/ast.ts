@@ -22,7 +22,7 @@ export function toAST(tokens: Token[]): ASTProgramNode {
         return null;
       case TokenType.Literal:
         currentIndex++;
-        return { type: ASTNodeType.Literal, value: currentToken.value, referenceValue: null};
+        return { type: ASTNodeType.Literal, value: currentToken.value};
       case TokenType.String:
         currentIndex++;
 

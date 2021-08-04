@@ -164,11 +164,6 @@ export interface ASTValueNode<T extends ASTNodeType, K> {
   value: K;
 }
 
-export interface ASTLiteralNode<K>
-  extends ASTValueNode<ASTNodeType.Literal, K> {
-  referenceValue: string | null;
-}
-
 export interface ASTProgramNode {
   type: ASTNodeType.Program;
   children: ASTNode[];
@@ -183,7 +178,7 @@ export interface ASTAssignmentNode {
 
 export type PrimitiveTypes =
   | ASTValueNode<ASTNodeType.String, string>
-  | ASTLiteralNode<string>;
+  | ASTValueNode<ASTNodeType.Literal, string>;
 
 export interface ASTLogNode {
   type: ASTNodeType.Log;
